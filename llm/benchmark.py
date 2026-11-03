@@ -1,4 +1,4 @@
-# python benchmark.py --models qwen3:8b gemma3:12b --queries test_queries.jsonl
+# python benchmark.py --models hf.co/yandex/YandexGPT-5-Lite-8B-instruct-GGUF:Q4_K_M qwen3:8b --queries test_queries.jsonl
 import argparse
 import csv
 import json

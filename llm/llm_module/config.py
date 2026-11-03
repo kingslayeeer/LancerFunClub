@@ -2,7 +2,7 @@ import os
 
 BACKEND = os.getenv("LLM_BACKEND", "ollama")  # ollama / openai
 BASE_URL = os.getenv("LLM_BASE_URL", "http://localhost:11434")
-MODEL = os.getenv("LLM_MODEL", "qwen3:8b")  # по бенчмарку быстрее gemma3:12b в 2 раза
+MODEL = os.getenv("LLM_MODEL", "hf.co/yandex/YandexGPT-5-Lite-8B-instruct-GGUF:Q4_K_M")  # лучшая по оценке + самая быстрая
 
 TIMEOUT_SECONDS = float(os.getenv("LLM_TIMEOUT", "180"))  # на cpu бывает долго
 RETRIES = int(os.getenv("LLM_RETRIES", "1"))

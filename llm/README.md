@@ -7,7 +7,7 @@
 | `llm_module/generator.py` | Модуль генерации: единый интерфейс `LLMGenerator.generate(...)` для бэкенда |
 | `llm_module/config.py` | Настройки: модель, адрес сервера, таймауты, параметры генерации (пресеты) |
 | `check_model.py` | Быстрая проверка «модель запущена и отвечает» |
-| `benchmark.py` | Сравнение 2–3 моделей: скорость, память, автометрики текста, ответы для ручной оценки |
+| `benchmark.py` | Сравнение моделей: скорость, память, автометрики текста, ответы для ручной оценки |
 | `test_queries.jsonl` | 10 тестовых запросов (временные, пока нет датасета участника 3) |
 | `tests/` | Тесты модуля без настоящей модели |
 | `MODELS.md` | Сравнительная таблица моделей и обоснование выбора (для презентации) |
@@ -18,23 +18,24 @@
 
 1. Скачать и установить Ollama: https://ollama.com/download (Windows / macOS / Linux).
    После установки сервер работает в фоне на `http://localhost:11434`.
-2. Скачать модели для сравнения (каждая весит 3–8 ГБ):
+2. Скачать выбранную модель (≈ 5 ГБ):
    ```bash
-   ollama pull qwen3:8b          # основной кандидат
-   ollama pull gemma3:12b        # если есть 12+ ГБ видеопамяти или 16+ ГБ ОЗУ
-   ollama pull gemma3:4b         # лёгкий вариант для слабых ноутбуков
-   ```
-   Российские модели берутся с Hugging Face в формате GGUF
-   (точное имя репозитория и квантизации проверить на huggingface.co перед запуском):
-   ```bash
-   ollama pull hf.co/t-tech/T-lite-it-2.1-GGUF:Q4_K_M
    ollama pull hf.co/yandex/YandexGPT-5-Lite-8B-instruct-GGUF:Q4_K_M
    ```
-3. Проверить вручную: `ollama run qwen3:8b "Напиши письмо о переносе встречи"`
+   Для повторения бенчмарка нужны остальные 5 моделей:
+   ```bash
+   ollama pull qwen3:8b
+   ollama pull gemma3:12b        # если есть 12+ ГБ видеопамяти или 16+ ГБ ОЗУ
+   ollama pull gemma3:4b         # лёгкий вариант для слабых ноутбуков
+   ollama pull llama3.1:8b
+   ollama pull hf.co/t-tech/T-lite-it-2.1-GGUF:Q4_K_M
+   ```
+   Российские модели берутся из официальных репозиториев разработчиков на Hugging Face (формат GGUF).
+3. Проверить вручную: `ollama run hf.co/yandex/YandexGPT-5-Lite-8B-instruct-GGUF:Q4_K_M "Напиши письмо о переносе встречи"`
 4. Установить зависимости Python и проверить модуль:
    ```bash
    pip install requests pytest
-   python check_model.py qwen3:8b
+   python check_model.py
    ```
 
 ### Запасной вариант: llama.cpp / vLLM
@@ -149,12 +150,12 @@ Ollama есть в виде готового образа `ollama/ollama`. В `d
 ## 5. Бенчмарк
 
 ```bash
-python benchmark.py --models qwen3:8b gemma3:12b hf.co/t-tech/T-lite-it-2.1-GGUF:Q4_K_M
+python benchmark.py --models qwen3:8b gemma3:12b gemma3:4b llama3.1:8b hf.co/t-tech/T-lite-it-2.1-GGUF:Q4_K_M hf.co/yandex/YandexGPT-5-Lite-8B-instruct-GGUF:Q4_K_M
 ```
 Результаты в папке `results/`:
 - `summary.md` — сводная таблица (время, скорость, память, автометрики) → вставить в `MODELS.md`;
 - `answers.csv` — все ответы; открыть в Excel и заполнить колонку «оценка_1_5»
-  (ясность цели, соответствие стилю, грамотность). Лучше, чтобы оценивали 2–3 человека из команды.
+  (ясность цели, соответствие стилю, грамотность). У нас оценивали 4 человека вслепую.
 
 Когда участник 3 подготовит свой датасет, его нужно сохранить в том же формате, что `test_queries.jsonl`.
 
