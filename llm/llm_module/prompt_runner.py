@@ -4,7 +4,7 @@ from pathlib import Path
 
 from .generator import LLMError, LLMGenerator
 
-# llm/llm_module/prompt_runner.py -> корень репо -> prompts/
+# промпты лежат в корне репо, в папке prompts/
 PROMPTS_DIR = Path(__file__).resolve().parents[2] / "prompts"
 PROMPTS_FILE = PROMPTS_DIR / "data" / "prompts.json"
 EDITOR_FILE = PROMPTS_DIR / "editor.json"
@@ -68,7 +68,7 @@ def _preset_for(length):
 
 
 def generate_document(entry, fields, llm=None):
-    """entry - один промпт из prompts.json, fields - {"topic": ..., "recipient": ..., ...}"""
+    # entry - один промпт из prompts.json, fields - {"topic": ..., "recipient": ..., ...}
     if not str(fields.get("body") or "").strip():
         raise LLMError("не заполнено поле body (суть документа)")
     llm = llm or LLMGenerator()
